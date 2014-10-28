@@ -48,10 +48,8 @@ function lab_align()
     lab_axis = axis_normalized(lab_axis);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     scale = 10;
-    flag = 0;
-    color_mat_const = color_mat;
-    while flag==0
-        color_mat(:) = color_mat_const(:) * scale;
+    while TRUE
+        color_mat(:) = color_mat(:) * scale;
         color_weight = color_mat*inv(color_axis); % p (25x3) = [x y z] (25x3) * [e1;e2;e3] (3x3)
         align_mat = color_weight*lab_axis;
         csvwrite('align_mat.csv',align_mat);    
@@ -63,20 +61,15 @@ function lab_align()
 
         for i=1:k
            if lab_boundary_test(align_mat(i,1),align_mat(i,2),align_mat(i,3))==0
-                flag = 1;
                 break;
            end
         end
-        if flag==1 
-            max_align_mat = align_mat;
-        end
-        scale = scale + 1;
+        max_align_mat = align_mat;
     end
-    disp(scale);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     rgb_mat = zeros(k,3);
     for i=1:k
-        [r,g,b] = Lab2RGB(max_align_mat(i,1),max_align_mat(i,2),max_align_mat(i,3));
+        [r,g,b] = Lab2RGB(align_mat(i,1),align_mat(i,2),align_mat(i,3));
         rgb_mat(i,1) = r;
         rgb_mat(i,2) = g;
         rgb_mat(i,3) = b;
