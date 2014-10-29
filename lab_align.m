@@ -2,7 +2,7 @@ function lab_align()
     obj = read_wobj('LAB_33.obj');
     vTotal = size(obj.vertices(:,1),1);
     lab_vertices = obj.vertices(:,:);
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140319_2213_c25.csv');
     k = 25;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %­pºâcluster center­«¤ß
@@ -84,15 +84,11 @@ function lab_align()
     end
    
     max_scale = -100000;
-    %max_index = 0;
-    %max_move = 0;
     max_align_mat = zeros(k,3);
     for i=1:length(move)
         if array(i).scale > max_scale
             max_scale = array(i).scale;
             max_align_mat = array(i).mat;
-            %max_move = array(i).move;
-            %max_index = i;
         end
     end
     %fprintf('%d %f %f',max_index,max_move,max_scale);
