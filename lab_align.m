@@ -1,8 +1,9 @@
 function lab_align()
+    tic; %time start
     obj = read_wobj('LAB_33.obj');
     vTotal = size(obj.vertices(:,1),1);
     lab_vertices = obj.vertices(:,:);
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140319_2213_c25.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140328_2356_c25.csv');
     k = 25;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %­pºâcluster center­«¤ß
@@ -70,11 +71,20 @@ function lab_align()
                     flag = 1;
                     break;
                end
-               if align_mat(j,1)<40
+               if align_mat(j,1)<30
                     flag = 1;
                     break;
                end
             end
+%             if lab_boundary_test(align_mat)==0
+%                 flag = 1;
+%             end
+%             for j=1:k
+%                 if align_mat(j,1)<40
+%                     flag = 1;
+%                     break;
+%                 end
+%             end
             
             if flag==0
                 %max_align_mat = align_mat;
@@ -104,31 +114,9 @@ function lab_align()
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     
     csvwrite('output/lab_color.csv',max_align_mat);
-%     max_luminance = max(max_align_mat(:,1));
-%     max_add_amount = 99 - max_luminance;
-%     for i=1:k
-%         if max_align_mat(i,1)<=50
-%             max_align_mat(i,1) = max_align_mat(i,1) + max_add_amount;
-%         else
-%             max_align_mat(i,1) = max_align_mat(i,1) + max_add_amount;
-%         end
-%     end
-%     csvwrite('output/lab_color_luminance_adjusted.csv',max_align_mat);
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    rgb_mat = zeros(k,3);
-    lab_img_mat = zeros(k,1,3);
-    for i=1:k
-        for j=1:3
-            lab_img_mat(i,1,j) = max_align_mat(i,j);
-        end
-    end
-    for i=1:k
-        %[r,g,b] = Lab2RGB(max_align_mat(i,1),max_align_mat(i,2),max_align_mat(i,3));
-        [r,g,b] = LABtoRGB(lab_img_mat);
-        rgb_mat(i,1) = r(i,1);
-        rgb_mat(i,2) = g(i,1);
-        rgb_mat(i,3) = b(i,1);
-    end
+    rgb_mat = LABtoRGB(max_align_mat);
     csvwrite('output/rgb_color.csv',rgb_mat);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     i = 1;
@@ -138,4 +126,6 @@ function lab_align()
         hold on    
     end
     
+    t = toc; %time end
+    disp(t);
 end
