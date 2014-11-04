@@ -45,7 +45,7 @@ function lab_align()
     lab_axis = [v1;v2;v3];
     lab_axis = axis_normalized(lab_axis);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    move = (-10.0:0.1:10.0);
+    move = (-5.0:0.1:5.0);
     %flag:判斷是否遇到了一個不合法的LAB點
     color_mat_const = color_mat;
     array(length(move)).scale = 0.0;
@@ -63,10 +63,14 @@ function lab_align()
                 %將重心平移回去
                 align_mat(:,j) = align_mat(:,j) + lab_vertices_centroid(1,j);
             end
-            csvwrite('output/lab_color.csv',align_mat);
+            %csvwrite('output/lab_color.csv',align_mat);
 
             for j=1:k
                if lab_boundary_test(align_mat(j,1),align_mat(j,2),align_mat(j,3))==0
+                    flag = 1;
+                    break;
+               end
+               if align_mat(j,1)<40
                     flag = 1;
                     break;
                end
@@ -83,19 +87,41 @@ function lab_align()
         end
     end
    
+    max_move = 0;
     max_scale = -100000;
     max_align_mat = zeros(k,3);
     for i=1:length(move)
         if array(i).scale > max_scale
             max_scale = array(i).scale;
+            max_move = array(i).move;
             max_align_mat = array(i).mat;
         end
     end
-    %fprintf('%d %f %f',max_index,max_move,max_scale);
     
-    %max_align_mat(:,1) = max_align_mat(:,1) + 15; %把亮度調大
+    %for i=1:length(move)
+    %    fprintf('%f %f\n',array(i).move,array(i).scale);
+    %end
+    fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
+    
+    csvwrite('output/lab_color.csv',max_align_mat);
+%     max_luminance = max(max_align_mat(:,1));
+%     max_add_amount = 99 - max_luminance;
+%     for i=1:k
+%         if max_align_mat(i,1)<=50
+%             max_align_mat(i,1) = max_align_mat(i,1) + max_add_amount;
+%         else
+%             max_align_mat(i,1) = max_align_mat(i,1) + max_add_amount;
+%         end
+%     end
+%     csvwrite('output/lab_color_luminance_adjusted.csv',max_align_mat);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     rgb_mat = zeros(k,3);
+    lab_img_mat = zeros(k,1,3);
+    for i=1:k
+        for j=1:3
+        lab_img_mat(i,1,j)
+        e
+    end
     for i=1:k
         [r,g,b] = Lab2RGB(max_align_mat(i,1),max_align_mat(i,2),max_align_mat(i,3));
         rgb_mat(i,1) = r;
