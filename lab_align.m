@@ -2,7 +2,7 @@ function lab_align()
     obj = read_wobj('LAB_33.obj');
     vTotal = size(obj.vertices(:,1),1);
     lab_vertices = obj.vertices(:,:);
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140319_2213_c25.csv');
     k = 25;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %­pºâcluster center­«¤ß
@@ -116,17 +116,18 @@ function lab_align()
 %     csvwrite('output/lab_color_luminance_adjusted.csv',max_align_mat);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     rgb_mat = zeros(k,3);
-%     lab_img_mat = zeros(k,1,3);
-%     for i=1:k
-%         for j=1:3
-%             lab_img_mat(i,1,j) = max_align_mat(i,j);
-%         end
-%     end
+    lab_img_mat = zeros(k,1,3);
     for i=1:k
-        [r,g,b] = Lab2RGB(max_align_mat(i,1),max_align_mat(i,2),max_align_mat(i,3));
-        rgb_mat(i,1) = r;
-        rgb_mat(i,2) = g;
-        rgb_mat(i,3) = b;
+        for j=1:3
+            lab_img_mat(i,1,j) = max_align_mat(i,j);
+        end
+    end
+    for i=1:k
+        %[r,g,b] = Lab2RGB(max_align_mat(i,1),max_align_mat(i,2),max_align_mat(i,3));
+        [r,g,b] = LABtoRGB(lab_img_mat);
+        rgb_mat(i,1) = r(i,1);
+        rgb_mat(i,2) = g(i,1);
+        rgb_mat(i,3) = b(i,1);
     end
     csvwrite('output/rgb_color.csv',rgb_mat);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
