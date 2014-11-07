@@ -1,17 +1,17 @@
-function lab_align()
-    tic; %time start
+function rgb_mat = lab_transform(rawMat)
     obj = read_wobj('LAB_33.obj');
     lab_vertices = obj.vertices(:,:);
-    vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
-    k = 25;
+    vTotal = size(lab_vertices,1);
+    %cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140328_2356_c25.csv');
+    %k = 25;
+    k = size(rawMat,1);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %計算cluster center重心
-    cluster_center_mat_centroid = compute_centroid(cluster_center_mat);
+    rawMat_centroid = compute_centroid(rawMat);
     %全部的點減去重心(將重心平移到原點)
     for i=1:k
-        for j=1:size(cluster_center_mat,2)
-            cluster_center_mat(i,j) = cluster_center_mat(i,j) - cluster_center_mat_centroid(1,j);
+        for j=1:size(rawMat,2)
+            rawMat(i,j) = rawMat(i,j) - rawMat_centroid(1,j);
         end
     end
     %計算lab vertices重心
@@ -24,9 +24,9 @@ function lab_align()
     end    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %PCA dimension reduction : cluster center matrix
-    [eigenVector,score,eigenvalue] = princomp(cluster_center_mat);
+    [eigenVector,score,eigenvalue] = princomp(rawMat);
     transMatrix(:,1:3) = eigenVector(:,1:3);
-    color_mat = cluster_center_mat * transMatrix;
+    color_mat = rawMat * transMatrix;
     %PCA的三個軸:e1,e2,e3
     e1 = eigenVector(1,1:3);
     e2 = eigenVector(2,1:3);
@@ -85,10 +85,6 @@ function lab_align()
                 if scale > max_scale
                     max_scale = scale;
                     max_move = move(i);
-                    max_align_mat = align_mat;
-                     %array(i).scale = scale;
-                     %array(i).move = move(i);
-                     %array(i).mat = align_mat;
                 end
             end
             
@@ -109,19 +105,17 @@ function lab_align()
     
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     
-    csvwrite('output/lab_color.csv',max_align_mat);
+    %csvwrite('output/lab_color.csv',max_align_mat);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     rgb_mat = LABtoRGB(max_align_mat);
-    csvwrite('output/rgb_color.csv',rgb_mat);
+    %csvwrite('output/rgb_color.csv',rgb_mat);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    i = 1;
-    for j=1:k
-        color = rgb_mat(j,1:3);
-        fill([i i+1 i+1 i],[j j j+1 j+1],color); % [x1 x2 x3 x4] [y1 y2 y3 y4]
-        hold on    
-    end
+%     i = 1;
+%     for j=1:k
+%         color = rgb_mat(j,1:3);
+%         fill([i i+1 i+1 i],[j j j+1 j+1],color); % [x1 x2 x3 x4] [y1 y2 y3 y4]
+%         hold on    
+%     end
     
-    t = toc; %time end
-    disp(t);
 end

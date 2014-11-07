@@ -20,6 +20,9 @@ function LAB_test()
     
     %csvwrite('test/lab_test.csv',visible_LAB);
 
+    %read text file
+    %a = load('haha.txt', '-ascii');
+    
     m = csvread('lab_test.csv');
     fid = fopen('lab.txt','w');
     for i=1:size(m,1);
