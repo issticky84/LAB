@@ -3,7 +3,7 @@ function lab_align()
     obj = read_wobj('LAB_33.obj');
     lab_vertices = obj.vertices(:,:);
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/output2.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
     k = size(cluster_center_mat,1);
     %k = 25;
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,12 +50,15 @@ function lab_align()
     move = (-1.0:0.1:1.0);
     %flag:判斷是否遇到了一個不合法的LAB點
     color_mat_const = color_mat;
-    %array(length(move)).scale = 0.0;
+
     %const_invert_color_axis = eye(3)/color_axis;
     max_move = 0;
-    max_scale = -100000;
-    max_align_mat = zeros(k,3);   
+    max_scale = 0;
+    %max_align_mat = zeros(k,3);   
+    max_align_mat = color_mat;
     
+    luminance_threshold = 30;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     for i=1:length(move)
         flag = 0;
         scale = 10.0;
@@ -73,14 +76,13 @@ function lab_align()
                 %將重心平移回去
                 align_mat(:,j) = align_mat(:,j) + lab_vertices_centroid(1,j);
             end
-            %csvwrite('output/lab_color.csv',align_mat);
 
             for j=1:k
                if lab_boundary_test(align_mat(j,1),align_mat(j,2),align_mat(j,3))==0
                     flag = 1;
                     break;
                end
-               if align_mat(j,1)<30
+               if align_mat(j,1)<luminance_threshold
                     flag = 1;
                     break;
                end
@@ -98,11 +100,17 @@ function lab_align()
             scale = scale + 5.0;
         end
     end
-   
-    fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
-
+    
+    if max_scale == 0
+        for j=1:3
+            %將重心平移回去
+            max_align_mat(:,j) = max_align_mat(:,j) + lab_vertices_centroid(1,j);
+        end
+    end 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     t = toc; %time end
-    disp(t)
+    fprintf('time elapsed : %f\n',t);
+    fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     
     csvwrite('output/lab_color.csv',max_align_mat);
 
@@ -116,5 +124,5 @@ function lab_align()
         fill([i i+1 i+1 i],[j j j+1 j+1],color); % [x1 x2 x3 x4] [y1 y2 y3 y4]
         hold on    
     end
-   
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 end

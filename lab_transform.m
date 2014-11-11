@@ -67,17 +67,22 @@ function rgb_mat = lab_transform(rawMat)
                 %將重心平移回去
                 align_mat(:,j) = align_mat(:,j) + lab_vertices_centroid(1,j);
             end
-            %csvwrite('output/lab_color.csv',align_mat);
+            convhull_mat = convhull(align_mat(:,1),align_mat(:,2),align_mat(:,3));
 
             for j=1:k
-               if lab_boundary_test(align_mat(j,1),align_mat(j,2),align_mat(j,3))==0
-                    flag = 1;
-                    break;
-               end
                if align_mat(j,1)<30
                     flag = 1;
                     break;
-               end
+               end                
+            end
+            
+            if flag==0
+                for j=1:size(convhull_mat,1)
+                    if lab_boundary_test(convhull_mat(j,1),convhull_mat(j,2),convhull_mat(j,3))==0
+                         flag = 1;
+                         break;
+                    end
+                end       
             end
             
             if flag==0
