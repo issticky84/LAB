@@ -1,11 +1,9 @@
-function lab_align_BinarySearch()
+function lab_align_BinarySearch_parfor()
     tic; %time start
-    %obj = read_wobj('LAB_33.obj');
-    %lab_vertices = obj.vertices(:,:);
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140328_2356_c25.csv');
+    cluster_center_mat = read_csv('csv_data/output2.csv');
     k = size(cluster_center_mat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,13 +54,13 @@ function lab_align_BinarySearch()
     max_move = 0;
     max_scale = 0; 
     max_align_mat = color_mat;
-    start = 1;
+    %start = 1;
     luminance_threshold = 30;
     %color_mat_move_scale = zeros(length(move),k,3);
     %%%%%%%%%%%%%%%%%%%%%% Binary Search the best scale %%%%%%%%%%%%%%%%%%%%%%%%%%%%
     parfor i=1:length(move)
-        scale_array = (start:1:150);
-        low = start;
+        scale_array = (1:1:150);
+        low = 1;
         high = length(scale_array);
         
         while low <= high
@@ -106,24 +104,14 @@ function lab_align_BinarySearch()
         end
         
             obj(i).scale = low;
-            obj(i).move = move(i);
             obj(i).mat = align_mat;
-%         if low>max_scale
-%             max_scale = low;
-%             max_move = move(i);
-%             max_align_mat = align_mat;
-%             %start = max_scale;
-%         end
     end
     
+   
     for i=1:length(move)
-        fprintf('%f %f\n',scale(i),move(i));
-    end
-    
-    for i=1:length(move)
-        if scale(i) > max_scale
+        if obj(i).scale > max_scale
             max_scale = obj(i).scale;
-            max_move = obj(i).move;
+            max_move = move(i);
             max_align_mat = obj(i).mat;
         end
     end

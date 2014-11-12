@@ -1,11 +1,9 @@
 function lab_align_BinarySearch()
     tic; %time start
-    %obj = read_wobj('LAB_33.obj');
-    %lab_vertices = obj.vertices(:,:);
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140319_2213_c25.csv');
+    cluster_center_mat = read_csv('csv_data/output2.csv');
     k = size(cluster_center_mat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
