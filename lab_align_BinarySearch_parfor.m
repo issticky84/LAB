@@ -1,9 +1,9 @@
 function lab_align_BinarySearch_parfor()
-    tic; %time start
+    tic %time start
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/output2.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
     k = size(cluster_center_mat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,6 +58,9 @@ function lab_align_BinarySearch_parfor()
     luminance_threshold = 30;
     %color_mat_move_scale = zeros(length(move),k,3);
     %%%%%%%%%%%%%%%%%%%%%% Binary Search the best scale %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %matlabpool size
+    %matlabpool open local 4 
+    %matlabpool close
     parfor i=1:length(move)
         scale_array = (1:1:150);
         low = 1;
@@ -123,8 +126,8 @@ function lab_align_BinarySearch_parfor()
         end
     end 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    t = toc; %time end
-    fprintf('time elapsed : %f\n',t);
+    toc %time end
+    %fprintf('time elapsed : %f\n',t);
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     fprintf('========================================\n');
     

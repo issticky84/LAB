@@ -1,11 +1,9 @@
 function lab_align_BinarySearch()
-    tic; %time start
-    %obj = read_wobj('LAB_33.obj');
-    %lab_vertices = obj.vertices(:,:);
+    tic %time start
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140328_2356_c25.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
     k = size(cluster_center_mat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,9 +56,8 @@ function lab_align_BinarySearch()
     max_align_mat = color_mat;
     start = 1;
     luminance_threshold = 30;
-    %color_mat_move_scale = zeros(length(move),k,3);
     %%%%%%%%%%%%%%%%%%%%%% Binary Search the best scale %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    parfor i=1:length(move)
+    for i=1:length(move)
         scale_array = (start:1:150);
         low = start;
         high = length(scale_array);
@@ -69,8 +66,8 @@ function lab_align_BinarySearch()
 
             mid = (low + high)/2;
 
-            %color_mat_move_scale(i,:,:) = ( color_mat_const(:,:) + move(i) ) * mid;
-            color_weight = (( color_mat_const(:,:) + move(i) ) * mid)/color_axis; % p (25x3) = [x y z] (25x3) * [e1;e2;e3] (3x3)
+            color_mat(:) = ( color_mat_const(:) + move(i) ) * mid;
+            color_weight = color_mat/color_axis; % p (25x3) = [x y z] (25x3) * [e1;e2;e3] (3x3)
             %color_weight = color_mat*const_invert_color_axis;
             align_mat = color_weight*lab_axis;   
             
@@ -78,6 +75,7 @@ function lab_align_BinarySearch()
                 %將重心平移回去
                 align_mat(:,j) = align_mat(:,j) + lab_vertices_centroid(1,j);
             end
+            convhull_mat = convhull(align_mat(:,1),align_mat(:,2),align_mat(:,3));
             
             flag = 0;
             for j=1:k
@@ -88,12 +86,18 @@ function lab_align_BinarySearch()
             end
             
             if flag==0
-                for j=1:k
-                    if lab_boundary_test(align_mat(j,1),align_mat(j,2),align_mat(j,3))==0
+                for j=1:size(convhull_mat,1)
+                %for j=1:k
+                    j1 = convhull_mat(j,1);
+                    j2 = convhull_mat(j,2);
+                    j3 = convhull_mat(j,3);
+                    %if lab_boundary_test(align_mat(j,1),align_mat(j,2),align_mat(j,3))==0
+                    if lab_boundary_test(align_mat(j1,1),align_mat(j2,2),align_mat(j3,3))==0
                          flag = 1;
                          break;
                     end
-                end       
+                %end  
+                end
             end
             
             if high <= low
@@ -105,26 +109,11 @@ function lab_align_BinarySearch()
             end
         end
         
-            obj(i).scale = low;
-            obj(i).move = move(i);
-            obj(i).mat = align_mat;
-%         if low>max_scale
-%             max_scale = low;
-%             max_move = move(i);
-%             max_align_mat = align_mat;
-%             %start = max_scale;
-%         end
-    end
-    
-    for i=1:length(move)
-        fprintf('%f %f\n',scale(i),move(i));
-    end
-    
-    for i=1:length(move)
-        if scale(i) > max_scale
-            max_scale = obj(i).scale;
-            max_move = obj(i).move;
-            max_align_mat = obj(i).mat;
+        if low>max_scale
+            max_scale = low;
+            max_move = move(i);
+            max_align_mat = align_mat;
+            start = max_scale;
         end
     end
     
@@ -135,8 +124,8 @@ function lab_align_BinarySearch()
         end
     end 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    t = toc; %time end
-    fprintf('time elapsed : %f\n',t);
+    toc %time end
+    %fprintf('time elapsed : %f\n',t);
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     fprintf('========================================\n');
     

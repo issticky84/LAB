@@ -1,9 +1,9 @@
 function lab_align_BinarySearch()
-    tic; %time start
+    tic %time start
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/output2.csv');
+    cluster_center_mat = read_csv('csv_data/cluster_center_BigData_20140330_0006_c25.csv');
     k = size(cluster_center_mat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +90,7 @@ function lab_align_BinarySearch()
                          flag = 1;
                          break;
                     end
-                end       
+               end  
             end
             
             if high <= low
@@ -117,8 +117,8 @@ function lab_align_BinarySearch()
         end
     end 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    t = toc; %time end
-    fprintf('time elapsed : %f\n',t);
+    toc %time end
+    %fprintf('time elapsed : %f\n',t);
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     fprintf('========================================\n');
     
