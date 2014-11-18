@@ -1,18 +1,18 @@
-function lab_align_BinarySearch_convhull()
+function lab_transform_BinarySearch_convhull_dim1(rawMat)
     tic %time start
     lab_vertices = read_csv('LAB_vertices.csv');
     fprintf('Finish reading LAB vertices...\n');
     vTotal = size(lab_vertices,1);    
-    cluster_center_mat = read_csv('csv_data/cluster_center_20141118_1120_refine_c25.csv');
-    k = size(cluster_center_mat,1);
+    %cluster_center_mat = read_csv('csv_data/output2.csv');
+    k = size(rawMat,1);
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %計算cluster center重心
-    cluster_center_mat_centroid = compute_centroid(cluster_center_mat);
+    rawMat_centroid = compute_centroid(rawMat);
     %全部的點減去重心(將重心平移到原點)
     for i=1:k
-        for j=1:size(cluster_center_mat,2)
-            cluster_center_mat(i,j) = cluster_center_mat(i,j) - cluster_center_mat_centroid(1,j);
+        for j=1:size(rawMat,2)
+            rawMat(i,j) = rawMat(i,j) - rawMat_centroid(1,j);
         end
     end
     %計算lab vertices重心
@@ -25,27 +25,23 @@ function lab_align_BinarySearch_convhull()
     end    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %PCA dimension reduction : cluster center matrix
-    [eigenVector,score,eigenvalue] = princomp(cluster_center_mat);
-    transMatrix(:,1:3) = eigenVector(:,1:3);
-    color_mat = cluster_center_mat * transMatrix;
+    [eigenVector,score,eigenvalue] = princomp(rawMat);
+    transMatrix(:,1) = eigenVector(:,1);
+    color_mat = rawMat * transMatrix;
     %PCA的三個軸:e1,e2,e3
-    e1 = eigenVector(1,1:3);
-    e2 = eigenVector(2,1:3);
-    e3 = eigenVector(3,1:3);
+    e1 = eigenVector(1,1);
     %e1_length = max(color_mat(:,1))-min(color_mat(:,1)) %1.724
-    color_axis = [e1;e2;e3];
-    color_axis = axis_normalized(color_axis);
+    color_axis = e1;
+    %color_axis = axis_normalized(color_axis);
     %PCA dimension reduction : LAB vertices
     [eigenVector,score,eigenvalue] = princomp(lab_vertices);
     %transMatrix2(:,1:3) = eigenVector(:,1:3);
     %lab_mat = lab_vertices * transMatrix2;
     %PCA的三個軸:v1,v2,v3
     v1 = eigenVector(1,1:3);
-    v2 = eigenVector(2,1:3);
-    v3 = eigenVector(3,1:3);
     %v1_length = max(lab_mat(:,1))-min(lab_mat(:,1)) %258.4473
-    lab_axis = [v1;v2;v3];
-    lab_axis = axis_normalized(lab_axis);
+    lab_axis = v1;
+    %lab_axis = axis_normalized(lab_axis);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     move = (-0.5:0.1:0.5);
     %flag:判斷是否遇到了一個不合法的LAB點

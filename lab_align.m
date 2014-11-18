@@ -1,5 +1,5 @@
 function lab_align()
-    tic; %time start
+    tic %time start
     obj = read_wobj('LAB_33.obj');
     lab_vertices = obj.vertices(:,:);
     vTotal = size(lab_vertices,1);    
@@ -64,7 +64,7 @@ function lab_align()
         scale = 10.0;
         while flag==0
             if(scale < max_scale)
-                scale = scale + 5.0;
+                scale = scale + 1.0;
                 continue;
             end
             color_mat(:) = ( color_mat_const(:) + move(i) ) * scale;
@@ -97,7 +97,7 @@ function lab_align()
             end
             
             %scale = scale + 0.05;
-            scale = scale + 5.0;
+            scale = scale + 1.0;
         end
     end
     
@@ -108,8 +108,8 @@ function lab_align()
         end
     end 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    t = toc; %time end
-    fprintf('time elapsed : %f\n',t);
+    toc %time end
+    %fprintf('time elapsed : %f\n',t);
     fprintf('max_move : %f max_scale : %f\n',max_move,max_scale);
     
     csvwrite('output/lab_color.csv',max_align_mat);
