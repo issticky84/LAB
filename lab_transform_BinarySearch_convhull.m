@@ -27,14 +27,15 @@ function lab_transform_BinarySearch_convhull(rawMat)
     %PCA dimension reduction : cluster center matrix
     [eigenVector,score,eigenvalue] = princomp(rawMat);
     transMatrix(:,1:3) = eigenVector(:,1:3);
-    color_mat = cluster_center_mat * transMatrix;
+    color_mat = rawMat * transMatrix;
     %PCA的三個軸:e1,e2,e3
     e1 = eigenVector(1,1:3);
     e2 = eigenVector(2,1:3);
     e3 = eigenVector(3,1:3);
     %e1_length = max(color_mat(:,1))-min(color_mat(:,1)) %1.724
-    color_axis = [e1;e2;e3];
-    color_axis = axis_normalized(color_axis);
+    color_axis = [e1;e2;e3]
+    eigenVector
+    %color_axis = axis_normalized(color_axis);
     %PCA dimension reduction : LAB vertices
     [eigenVector,score,eigenvalue] = princomp(lab_vertices);
     %transMatrix2(:,1:3) = eigenVector(:,1:3);
@@ -45,7 +46,7 @@ function lab_transform_BinarySearch_convhull(rawMat)
     v3 = eigenVector(3,1:3);
     %v1_length = max(lab_mat(:,1))-min(lab_mat(:,1)) %258.4473
     lab_axis = [v1;v2;v3];
-    lab_axis = axis_normalized(lab_axis);
+    %lab_axis = axis_normalized(lab_axis);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     move = (-0.5:0.1:0.5);
     %flag:判斷是否遇到了一個不合法的LAB點
@@ -68,6 +69,10 @@ function lab_transform_BinarySearch_convhull(rawMat)
 
             color_mat(:) = ( color_mat_const(:) + move(i) ) * mid;
             color_weight = color_mat/color_axis; % p (25x3) = [x y z] (25x3) * [e1;e2;e3] (3x3)
+            if i==1
+                %color_mat
+                %color_weight
+            end
             %color_weight = color_mat*const_invert_color_axis;
             align_mat = color_weight*lab_axis;   
             
@@ -75,6 +80,8 @@ function lab_transform_BinarySearch_convhull(rawMat)
                 %將重心平移回去
                 align_mat(:,j) = align_mat(:,j) + lab_vertices_centroid(1,j);
             end
+            
+            
             a1 = align_mat(:,1);
             a2 = align_mat(:,2);
             a3 = align_mat(:,3);
